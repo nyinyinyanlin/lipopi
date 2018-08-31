@@ -18,11 +18,15 @@
 import os
 import RPi.GPIO as GPIO
 import time
+from picamera import PiCamera
+from datetime import datetime
+from signal import pause
 
 # Configure the GPIO pins
 
 def lipopi_setup():
     global lipopi
+    global camera
 
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
@@ -33,6 +37,8 @@ def lipopi_setup():
     # setup the low battery check pin
     GPIO.setup(lipopi['low_battery_pin'], GPIO.IN)
 
+    # start video recording
+    camera.start_recording('/home/pi/recordings/%s.mjpeg' % datetime,format="mjpeg")
     # create a trigger for the shutdown switch and low battery pins
 
     GPIO.add_event_detect(lipopi['shutdown_pin'], GPIO.RISING, callback=lipopi_user_shutdown, bouncetime=300)
@@ -47,6 +53,10 @@ def lipopi_setup():
 
 def lipopi_user_shutdown(channel):
     global lipopi
+    global camera
+
+    camera.stop_recording()
+    camera.close()
 
     cmd = "sudo wall 'System shutting down in %d seconds'" % lipopi['shutdown_wait']
     os.system(cmd)
@@ -65,7 +75,11 @@ def lipopi_user_shutdown(channel):
 
 def lipopi_low_battery_shutdown(channel):
     global lipopi
+    global camera
 
+    camera.stop_recording()
+    camera.close()
+    
     cmd = "sudo wall 'System shutting down in %d seconds'" % lipopi['shutdown_wait']
     os.system(cmd)
 
@@ -80,6 +94,8 @@ def lipopi_low_battery_shutdown(channel):
 # Close the log file, reset the GPIO pins
 def lipopi_cleanup():
     global lipopi
+    global camera
+
     lipopi['logfile_pointer'].close()
     GPIO.cleanup()
 
@@ -87,9 +103,13 @@ def lipopi_cleanup():
 
 # Main --------------------------------------------
 
+# Get current datetime to be used as filename
+datetime = datetime.now().isoformat()
+
+# Setup camera
+camera = PiCamera()
 
 # Setup LiPoPi global variable array
-
 lipopi = {}
 
 # Specify which GPIO pins to use
@@ -115,8 +135,3 @@ while True:
 # clean up if the script exits without machine shutdown
 
 lipopi_cleanup()
-
-
-
-
-
