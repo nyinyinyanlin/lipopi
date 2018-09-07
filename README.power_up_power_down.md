@@ -152,9 +152,10 @@ Push the button and the Pi should shut down. Push it again (for several seconds)
 The log file will be written to /home/pi/lipopi - change this in the lipopi.py script if you want.
 
 > Note - lipopi.service assumes your working and exec directories are as follow
-> [Service]
-> ExecStart=/home/pi/lipopi/lipopi.py
-> WorkingDirectory=/home/pi/lipopi/
+``` [Service]
+ ExecStart=/home/pi/lipopi/lipopi.py
+ WorkingDirectory=/home/pi/lipopi/
+ ```
 > Please edit lipopi.service file if you have put your python script elsewhere.
 
 
