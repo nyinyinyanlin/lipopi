@@ -35,15 +35,15 @@ def lipopi_setup():
     GPIO.setup(lipopi['shutdown_pin'], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
     # setup the low battery check pin
-    GPIO.setup(lipopi['low_battery_pin'], GPIO.IN)
+    #GPIO.setup(lipopi['low_battery_pin'], GPIO.IN)
 
     # start video recording
-    camera.start_recording('/home/pi/recordings/%s.mjpeg' % datetime,format="mjpeg")
+    camera.start_recording('/boot/recordings/%s.mp4' % datetime,format="h264")
     # create a trigger for the shutdown switch and low battery pins
 
     GPIO.add_event_detect(lipopi['shutdown_pin'], GPIO.RISING, callback=lipopi_user_shutdown, bouncetime=300)
 
-    GPIO.add_event_detect(lipopi['low_battery_pin'], GPIO.FALLING, callback=lipopi_low_battery_shutdown, bouncetime=300)
+    #GPIO.add_event_detect(lipopi['low_battery_pin'], GPIO.FALLING, callback=lipopi_low_battery_shutdown, bouncetime=300)
 
     # open log file in append mode
     lipopi['logfile_pointer'] = open(lipopi['logfile'], 'a+')
