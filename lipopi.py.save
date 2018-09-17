@@ -38,9 +38,9 @@ def lipopi_setup():
 
     # setup the low battery check pin
     #GPIO.setup(lipopi['low_battery_pin'], GPIO.IN)
-    now = "/home/pi/Desktop/%s.mp4" % datetime
+    now = "/home/pi/Desktop/%s.mp4" % now
     # start video recording
-    camera.start_recording(now,format="h264")
+    camera.start_recording('/home/pi/Desktop/%s.mp4,format="h264")
     # create a trigger for the shutdown switch and low battery pins
 
     GPIO.add_event_detect(lipopi['shutdown_pin'], GPIO.RISING, callback=lipopi_user_shutdown, bouncetime=300)
@@ -60,9 +60,7 @@ def lipopi_user_shutdown(channel):
 
     camera.stop_recording()
     camera.close()
-    cmd = "cp /home/pi/Desktop/%s /boot/recordings/" % now
-    os.system(cmd)
-    cmd = "rm /home/pi/Desktop/*.mp4"
+    cmd = "cp /home/pi/Desktop/%s.mp4 /boot/recordings/" % now
     os.system(cmd)
     cmd = "sudo wall 'System shutting down in %d seconds'" % lipopi['shutdown_wait']
     os.system(cmd)
